@@ -50,8 +50,30 @@ io.on("connection", function (uniquesocket) {
         else if (uniquesocket.id === players.black){
             delete players.black;
         }
+    });
+
+    uniquesocket.on('move', (move) => {
+        try{
+            if(chess.turn() === 'w' && uniquesocket.id !== players.white) return;
+            if(chess.turn() === 'b' && uniquesocket.id !== players.black) return;
+
+            const result = chess.move;
+            if(result){
+                currentPlayer = chess.turn();
+                io.emit('move', move);
+                io.emit('boardState', chess.fen());
+            }
+            else{
+                console.log("Invalid move: ", move);
+                uniquesocket.emit('invalidMove',move);
+            }
+        }
+        catch(err){
+            console.log(err);
+            uniquesocket.emit("Invalid move: ", move);
+        };
     })
-})
+});
 
 server.listen(3000, function() {
     console.log("Listening on port 3000");

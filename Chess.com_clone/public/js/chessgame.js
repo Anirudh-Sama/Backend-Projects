@@ -39,11 +39,38 @@ const renderBoard = () => {
                     draggedPiece = null;
                     sourceSquare = null;
                 })
+
+                squareElement.appendChild(pieceElement);
             }
+
+            squareElement.addEventListener('dragover', function(e){
+                e.preventDefault();
+            })
+
+            squareElement.addEventListener("drop", function(e){
+                e.preventDefault();
+                if(draggedPiece){
+                    const targetSource = {
+                        row: parseInt(squareElement.dataset.row),
+                        col: parseInt(squareElement.dataset.col)
+                    };
+
+                    handleMove(sourceSquare, targetSource);
+                }
+            })
+
+            boardElement.appendChild(squareElement);
         });
     });
 };
 
 const handleMove = () => {};
 
-const getpieceUnicode = () => {};
+const getpieceUnicode = (piece) => {
+    const unicodePieces = {
+        K: "♔",
+    };
+    return unicodePieces[piece.type] || "";
+};
+
+renderBoard();
